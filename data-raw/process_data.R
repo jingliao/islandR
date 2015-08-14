@@ -44,15 +44,11 @@ all <- do.call(rbind, all)
 
 attr_cols <- names(all) %in% paste0("Source",0:3)
 
-# select values from column sources only and transform exponentially
-# then store these columns in the original data frame
+# the values in source columns result from P( i(h)|j )*P(j)
+# where P(j)=1/j=1/4, back-transform these values to find P(i(h)|j)
 
-all[,attr_cols] <- exp(all[,attr_cols])
+all[,attr_cols] <- exp(all[,attr_cols]-log(1/4))
 
-# modified from rowSums to colSums in order to fix p(j|i) to p(i|j)
-# where j represents source and i denotes ST
-
-all[,attr_cols] <- all[,attr_cols] / colSums(all[,attr_cols])
 
 # reorder + rename
 all <- all %>% select(ST, everything()) %>% rename(ASP=Loci0, GLN=Loci1, GLT=Loci2,
